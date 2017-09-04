@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"></meta>
+  <title>Node-Web | About </title>
+</head>
+<body>
+{{> header}}
+
+
+  <p>Some text here {{name 1 cls="myclass"}}</p>
+  {{#if people}}
+  {{#list people}}{{firstName}} cat {{lastName}}{{/list}}
+  {{/if}}
+  {{> footer  cnt="annap"}}
+
+</body>
+</html>
