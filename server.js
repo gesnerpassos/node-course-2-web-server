@@ -4,11 +4,13 @@ const hbs = require('hbs');
 hbs.registerPartials(__dirname + "/views/partials");
 
 var app = express();
-
+var port = process.env.Port || 3000;
 app.set('view engine', 'hbs');
 
 app.use( express.static(__dirname + "/public"));
 
+/*
+using middlewares
 app.use((req, res, next)=>{
   var now = new Date().toString();
   console.log( now + " " + req.method + " " + req.url);
@@ -18,7 +20,7 @@ app.use((req, res, next)=>{
   // allow other middlewares to procceed
   //next();
 });
-
+*/
 hbs.registerHelper('fullYear', ()=>{
   return new Date().getFullYear();
 });
@@ -56,6 +58,6 @@ app.get('/about', (req,res)=>{
   //res.render(hbs.templates['templates'],  {pageTitle: 'About Page' });
 });
 
-app.listen(3000, ()=>{
+app.listen(port, ()=>{
   console.log("server is ready to go");
 });
