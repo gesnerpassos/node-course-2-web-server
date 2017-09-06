@@ -58,6 +58,10 @@ app.get('/about', (req,res)=>{
   //res.render(hbs.templates['templates'],  {pageTitle: 'About Page' });
 });
 
+app.get('/projects', (req,res)=>{
+  res.render( 'projects.hbs'); 
+})
+
 app.listen(port, ()=>{
   console.log("server is ready to go");
 });
