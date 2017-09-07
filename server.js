@@ -1,10 +1,13 @@
 const express = require('express');
-const hbs = require('hbs');
-
-hbs.registerPartials(__dirname + "/views/partials");
+const hbs = require('express-hbs');
+const path = require('path');
 
 var app = express();
 const port = process.env.PORT || 3000;
+app.engine('hbs', hbs.express4({
+layoutsDir: path.join(__dirname, '/views'),
+partialsDir: path.join(__dirname, 'views/partials'),
+}));
 app.set('view engine', 'hbs');
 
 app.use( express.static(__dirname + "/public"));
@@ -45,6 +48,7 @@ hbs.registerHelper('list', function(items, options) {
 app.get( '/', (req, res)=>{
   res.render('about.hbs', {pageTitle: 'Home Page'});
 
+
 });
 app.get('/about', (req,res)=>{
   res.render('about.hbs', {
@@ -59,9 +63,14 @@ app.get('/about', (req,res)=>{
 });
 
 app.get('/projects', (req,res)=>{
-  res.render( 'projects.hbs'); 
-})
+  res.render( 'projects.hbs', {
+    pageTitle: 'Projects'
+  });
+});
 
 app.listen(port, ()=>{
   console.log("server is ready to go");
-});
+})
+
+
+module.exports.app = app;
