@@ -2,6 +2,7 @@ const express = require('express');
 const hbs = require('express-hbs');
 const path = require('path');
 
+
 var app = express();
 const port = process.env.PORT || 3000;
 app.engine('hbs', hbs.express4({
@@ -67,6 +68,9 @@ app.get('/projects', (req,res)=>{
     pageTitle: 'Projects'
   });
 });
+
+
+
 
 app.listen(port, ()=>{
   console.log("server is ready to go");

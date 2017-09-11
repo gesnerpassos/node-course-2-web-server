@@ -32,10 +32,10 @@ MongoClient.connect('mongodb://localhost:27017/TodoApi', (err, db)=>{
   })
 
   db.collection('Users').count().then((count)=>{
-    console.log( `[Promise] There are ${count} users registered`); 
+    console.log( `[Promise] There are ${count} users registered`);
   });
-  //db.collection('Todos').find().toArray()
-  db.collection('Users').find().toArray()
+  db.collection('Users').find({name:"Luisa"}).toArray()
+  //db.collection('Users').find().toArray()
   //db.collection('Todos').find( new ObjectId("59b3fefb07bf7553a83ac2a8")).toArray()
    .then( (docs)=>{
      console.log(JSON.stringify(docs, undefined, 2));
