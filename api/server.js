@@ -23,10 +23,15 @@ app.post('/todos', (req, res)=>{
 });
 
 
-/*app.get('/todos', (req,res)=>{
+app.get('/todos', (req,res)=>{
+  Todo.find()
+   .then( (todos)=>{
+     res.send( {todos});
+  }, (e)=>{
+    res.status(404).send(e);
+  });
 
-
-});*/
+});
 
 
 app.listen(port, ()=>{
