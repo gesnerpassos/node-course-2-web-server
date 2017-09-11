@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.4",
-    "express-hbs": "^1.0.4"
+    "express-hbs": "^1.0.4",
+    "mongodb": "^2.2.31"
   },
   "devDependencies": {
     "expect": "^21.0.0",
