@@ -1,5 +1,6 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectId} = require('mongodb');
 
 var {app} = require('../server');
 var {Todo} = require('../models/todos');
@@ -8,9 +9,11 @@ var {User} = require('../models/user');
 
 const todos = [
   {
+    _id : new ObjectId(),
     text: 'First test todo'
   },
   {
+    _id : new ObjectId(),
     text: 'Second test todo'
   }
 ];
@@ -31,7 +34,7 @@ describe( 'POST /todos', ()=>{
      .send({text})
      .expect(200)
      .expect( (res)=>{
-       var tod = res.body;
+       var tod = res.body.todo;
        expect( tod.text).toBe( text );
        expect(tod.completed).toBe(false);
      })
@@ -87,3 +90,41 @@ describe( 'GET /todos', ()=>{
     }).end(done);
   });
 })
+
+
+describe( 'GET /todos/:id', ()=>{
+  it( 'should return todo doc', (done)=>{
+    var todo = todos[0];
+    var id = todo._id.toHexString();
+    request(app)
+     .get(`/todos/${id}`)
+     .expect( 200)
+     .expect( (res)=>{
+       expect(res.body.todo.text).toBe( todo.text);
+     }).end((e)=>{
+       if( e )
+         return done(e);
+       return done();
+     })
+  });
+
+  it( 'should return not found for other ids', (done)=>{
+    var id = (new ObjectId()).toHexString();
+    request(app)
+     .get( `/todos/${id}` )
+     .expect(404)
+     .end( (e)=>{
+       done(e);
+     });
+  });
+
+  it( 'should return not found for invalid id', (done)=>{
+    var id = "123";
+    request(app)
+     .get( `/todos/${id}` )
+     .expect(404)
+     .end( (e)=>{
+       done(e);
+     });
+  });
+});
