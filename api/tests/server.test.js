@@ -128,3 +128,40 @@ describe( 'GET /todos/:id', ()=>{
      });
   });
 });
+
+
+describe(' DELETE /todos/:id', ()=>{
+  it('should delete todo for a valid id', (done)=>{
+    var todo = todos[1];
+    var id = todo._id.toHexString();
+    request(app)
+     .delete(`/todos/${id}`)
+     .expect( 200)
+     .expect( (res)=>{
+       expect(res.body.todo.text).toBe( todo.text);
+     }).end((e)=>{
+       if( e )
+         return done(e);
+       return done();
+     })
+  });
+  it( 'should return 404 for an invalid id', (done)=>{
+    var id = (new ObjectId()).toHexString();
+    request(app)
+     .delete( `/todos/${id}` )
+     .expect(404)
+     .end( (e)=>{
+       done(e);
+     });
+  });
+  it( 'should return 404 for not found id', (done)=>{
+    var id = "123";
+    request(app)
+     .delete( `/todos/${id}` )
+     .expect(404)
+     .end( (e)=>{
+       done(e);
+     });
+  });
+
+});
