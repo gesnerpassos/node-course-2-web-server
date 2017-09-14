@@ -10,11 +10,14 @@ var {User} = require('../models/user');
 const todos = [
   {
     _id : new ObjectId(),
-    text: 'First test todo'
+    text: 'First test todo',
+    completed: true,
+    completedAt: 3000
   },
   {
     _id : new ObjectId(),
-    text: 'Second test todo'
+    text: 'Second test todo',
+    completed: false,
   }
 ];
 
@@ -130,7 +133,7 @@ describe( 'GET /todos/:id', ()=>{
 });
 
 
-describe(' DELETE /todos/:id', ()=>{
+describe('DELETE /todos/:id', ()=>{
   it('should delete todo for a valid id', (done)=>{
     var todo = todos[1];
     var id = todo._id.toHexString();
@@ -158,6 +161,103 @@ describe(' DELETE /todos/:id', ()=>{
     var id = "123";
     request(app)
      .delete( `/todos/${id}` )
+     .expect(404)
+     .end( (e)=>{
+       done(e);
+     });
+  });
+
+});
+
+describe('PATCH /todos/:id', ()=>{
+ it('should make it completed and update text', (done)=>{
+    var todo = todos[1];
+    var newText = 'New text from update';
+    var updateBody = {
+      text: newText,
+      completed: true,
+      //not necessary and should not be used
+      completedAt: 10
+    };
+    var id = todo._id.toHexString();
+    request(app)
+     .patch(`/todos/${id}`)
+     .expect( 200)
+     .send(updateBody)
+     .expect( (res)=>{
+       expect(res.body.todo.text).toBe( newText);
+       expect(res.body.todo.completed).toBe( true);
+       expect(res.body.todo.completedAt).not.toBe(10);
+       expect(res.body.todo.completedAt).toBeGreaterThan(10000);
+       Todo.findById(id).then((todo)=>{
+         expect(JSON.stringify(res.body.todo)).toEqual(JSON.stringify(todo));
+       });
+     }).end((e)=>{
+       if( e )
+         return done(e);
+       return done();
+     })
+  });
+  it('should make clear completed', (done)=>{
+    var todo = todos[0];
+    var id = todo._id.toHexString();
+    var updateBody = {
+      completed: false,
+    };
+    request(app)
+     .patch(`/todos/${id}`)
+     .expect( 200)
+     .send(updateBody)
+     .expect( (res)=>{
+       expect(res.body.todo.completed).toBe(false);
+       expect(res.body.todo.text).toBe( todo.text);
+       expect(res.body.todo.completedAt).toBeNull();
+       Todo.findById(id).then((todo)=>{
+         expect(JSON.stringify(res.body.todo)).toBe(JSON.stringify(todo));
+       });
+     }).end((e)=>{
+       if( e )
+         return done(e);
+       return done();
+     })
+  });
+
+  it('it should not change todo if nor completed neither text is provided', (done)=>{
+    var todo = todos[0];
+    var id = todo._id.toHexString();
+
+    request(app)
+     .patch(`/todos/${id}`)
+     .expect( 200)
+     .send({})
+     .expect( (res)=>{
+       expect(res.body.todo.completed).toBe(true);
+       expect(res.body.todo.text).toBe( todos[0].text);
+       expect(res.body.todo.completedAt).toBe(3000);
+       Todo.findById(id).then((todo)=>{
+         expect(JSON.stringify(res.body.todo)).toBe(JSON.stringify(todo));
+       });
+     }).end((e)=>{
+       if( e )
+         return done(e);
+       return done();
+     })
+  });
+
+  it( 'should return 404 for an invalid id', (done)=>{
+    var id = (new ObjectId()).toHexString();
+    request(app)
+     .patch( `/todos/${id}` )
+     .expect(404)
+     .end( (e)=>{
+       done(e);
+     });
+  });
+
+  it( 'should return 404 for not found id', (done)=>{
+    var id = "123";
+    request(app)
+     .patch( `/todos/${id}` )
      .expect(404)
      .end( (e)=>{
        done(e);
